@@ -11,20 +11,23 @@ This project is a minimal Docker-based web server for serving local film files (
 - `convert.sh` tool for converting `.mkv` → `.mp4` and extracting subtitles
 - Simple HTML5 video player with custom buttons for Play/Pause + Fullscreen
 
----
 
+<pre>
 ## 📂 File Structure
-movies/
-├── docker-compose.yml
-├── Dockerfile
-├── entrypoint.sh
-├── template.html         # Tailwind-powered frontend
-├── convert.sh            # Film converter and subtitle extractor
-├── media/
-│   ├── output.mp4        # Converted video
-│   └── subs.vtt          # Optional subtitles
 
----
+<code>
+movies/
+├── docker-compose.yml         # Docker and Traefik setup
+├── Dockerfile                 # Builds the Nginx-based image
+├── entrypoint.sh              # Generates index.html dynamically
+├── template.html              # Tailwind-powered frontend
+├── convert.sh                 # Film converter and subtitle extractor
+└── media/                     # Folder for movie files
+    ├── output.mp4             # Converted movie file
+    └── subs.vtt               # Optional subtitles
+</code>
+</pre>
+
 
 ## 🛠 Usage
 
