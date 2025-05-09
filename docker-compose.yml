@@ -1,0 +1,18 @@
+services:
+  film:
+    build: .
+    container_name: film_server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.film.rule=Host(`film.connorstansfield.com`)"
+      - "traefik.http.routers.film.entrypoints=websecure"
+      - "traefik.http.routers.film.tls.certresolver=mytlschallenge"
+    volumes:
+      - ./media:/usr/share/nginx/html
+    networks:
+      - traefik_network
+    restart: unless-stopped
+
+networks:
+  traefik_network:
+    external: true
