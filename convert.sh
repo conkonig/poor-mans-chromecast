@@ -20,12 +20,39 @@ if [ "$SUBS_CHOICE" = "y" ]; then
 fi
 
 echo
-echo "🎬 Converting video with audio stream $AUDIO_STREAM..."
-ffmpeg -i "$INPUT" -map 0:v:0 -map "$AUDIO_STREAM" -c:v copy -c:a aac -b:a 192k temp_output.mp4
+echo "Select output resolution:"
+echo "1) Original quality"
+echo "2) 1080p (recommended for Smart TVs)"
+echo "3) 720p (better for older TVs or slow connections)"
+read -p "Choice (1/2/3): " RES_CHOICE
 
-echo "⚡ Optimizing for fast start playback..."
-ffmpeg -i temp_output.mp4 -movflags +faststart -c copy media/output.mp4
-rm temp_output.mp4
+SCALE_FILTER=""
+BITRATE=""
+
+case "$RES_CHOICE" in
+  2)
+    SCALE_FILTER="-vf scale=1920:-2"
+    BITRATE="-b:v 2500k"
+    ;;
+  3)
+    SCALE_FILTER="-vf scale=1280:-2"
+    BITRATE="-b:v 1500k"
+    ;;
+  *)
+    echo "➡️  Keeping original resolution"
+    ;;
+esac
+
+echo
+echo "🎬 Transcoding and optimizing for streaming..."
+
+ffmpeg -i "$INPUT" \
+  -map 0:v:0 -map "$AUDIO_STREAM" \
+  -c:v libx264 $SCALE_FILTER $BITRATE \
+  -preset fast \
+  -c:a aac -b:a 192k \
+  -movflags +faststart \
+  media/output.mp4
 
 if [ "$SUBS_CHOICE" = "y" ]; then
   echo
@@ -36,4 +63,4 @@ if [ "$SUBS_CHOICE" = "y" ]; then
 fi
 
 echo
-echo "✅ Done! Output saved as media/output.mp4"
+echo "✅ Done! Final output: media/output.mp4"
