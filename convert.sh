@@ -7,7 +7,7 @@ if [ -z "$INPUT" ]; then
   exit 1
 fi
 
-# Step 1: Show stream info
+# Show stream info
 echo "=== Stream info for $INPUT ==="
 ffmpeg -i "$INPUT" 2>&1 | grep -E "Stream #[0-9]+:[0-9]+.*(Audio|Subtitle)"
 
@@ -20,8 +20,12 @@ if [ "$SUBS_CHOICE" = "y" ]; then
 fi
 
 echo
-echo "➡️  Converting video with audio stream $AUDIO_STREAM..."
-ffmpeg -i "$INPUT" -map 0:v:0 -map "$AUDIO_STREAM" -c:v copy -c:a aac -b:a 192k media/output.mp4
+echo "🎬 Converting video with audio stream $AUDIO_STREAM..."
+ffmpeg -i "$INPUT" -map 0:v:0 -map "$AUDIO_STREAM" -c:v copy -c:a aac -b:a 192k temp_output.mp4
+
+echo "⚡ Optimizing for fast start playback..."
+ffmpeg -i temp_output.mp4 -movflags +faststart -c copy media/output.mp4
+rm temp_output.mp4
 
 if [ "$SUBS_CHOICE" = "y" ]; then
   echo
